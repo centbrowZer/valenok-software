@@ -12,6 +12,7 @@
             color: #fff;
             font-family: Arial, sans-serif;
             overflow: hidden;
+            cursor: none; /* Скрываем стандартный курсор */
         }
         .container {
             display: flex;
@@ -28,29 +29,38 @@
             animation: spin 5s linear infinite;
             border: 3px solid #fff;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            opacity: 0; /* Начальная прозрачность для анимации */
+            animation: fadeIn 1s ease-in-out forwards, spin 5s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
         .title {
             font-size: 48px;
             font-weight: bold;
-            background: linear-gradient(45deg, #ff0099, #493240);
+            background: linear-gradient(45deg, #ffffff, #e0e0e0); /* Белый градиент */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(255, 0, 153, 0.7), 0 0 20px rgba(255, 0, 153, 0.5);
-            animation: glow 2s infinite alternate;
-            margin-top: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: glow 2s infinite alternate, fadeIn 1s ease-in-out 0.5s forwards;
+            opacity: 0; /* Начальная прозрачность для анимации */
+            margin: 30px 0; /* Отступ между логотипом и кнопками */
         }
         @keyframes glow {
-            0% { text-shadow: 0 0 10px rgba(255, 0, 153, 0.7), 0 0 20px rgba(255, 0, 153, 0.5); }
-            100% { text-shadow: 0 0 20px rgba(255, 0, 153, 0.9), 0 0 40px rgba(255, 0, 153, 0.7); }
+            0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5); }
+            100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.7); }
         }
         .buttons {
-            margin-top: 40px;
+            margin-top: 30px; /* Уменьшенный отступ */
             display: flex;
             gap: 30px;
+            opacity: 0; /* Начальная прозрачность для анимации */
+            animation: fadeIn 1s ease-in-out 1s forwards;
         }
         .buttons a {
             display: inline-flex;
@@ -64,6 +74,7 @@
             font-size: 20px;
             background-color: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: none; /* Убираем стандартный курсор */
         }
         .buttons a:hover {
             background-color: rgba(255, 255, 255, 0.2);
@@ -83,30 +94,77 @@
             left: 0;
             z-index: -1;
         }
-        .overlay {
+        .footer {
             position: fixed;
-            top: 0;
-            left: 0;
+            bottom: 0;
             width: 100%;
-            height: 100%;
-            backdrop-filter: blur(10px);
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            opacity: 0; /* Начальная прозрачность для анимации */
+            animation: fadeIn 1s ease-in-out 1.5s forwards;
+        }
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            z-index: 1000;
+            transition: transform 0.1s ease-out;
+        }
+        .music-control {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            color: #fff;
-            z-index: 1000;
-            cursor: pointer;
+            cursor: none; /* Убираем стандартный курсор */
+            transition: background-color 0.3s ease;
         }
-        .overlay.hidden {
-            display: none;
+        .music-control:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .music-control img {
+            width: 24px;
+            height: 24px;
+            filter: invert(1); /* Делаем иконку белой */
+        }
+        .toggle-particles {
+            position: fixed;
+            top: 80px; /* Расположение ниже иконки музыки */
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none; /* Убираем стандартный курсор */
+            transition: background-color 0.3s ease;
+        }
+        .toggle-particles:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .toggle-particles img {
+            width: 24px;
+            height: 24px;
+            filter: invert(1); /* Делаем иконку белой */
         }
     </style>
 </head>
 <body>
-    <div class="overlay" id="overlay">
-        Нажмите ЛКМ чтобы продолжить
-    </div>
+    <div class="custom-cursor" id="customCursor"></div>
     <div class="container">
         <img src="logo.png" alt="Valenok SoftWare Logo" class="logo">
         <div class="title">Valenok</div>
@@ -121,33 +179,25 @@
             </a>
         </div>
     </div>
+    <div class="footer">
+        © 2025 Valenok SoftWare
+    </div>
     <canvas class="particles"></canvas>
     <audio id="backgroundMusic" src="song.mp3" loop></audio>
     <script>
-        const overlay = document.getElementById('overlay');
-        const backgroundMusic = document.getElementById('backgroundMusic');
-
-        overlay.addEventListener('click', () => {
-            overlay.classList.add('hidden');
-            backgroundMusic.play();
+        // Интерактивный курсор
+        const customCursor = document.getElementById('customCursor');
+        document.addEventListener('mousemove', (e) => {
+            customCursor.style.left = `${e.pageX}px`;
+            customCursor.style.top = `${e.pageY}px`;
         });
-
+        // Частицы
         const canvas = document.querySelector('.particles');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         const particlesArray = [];
-        const numberOfParticles = 100;
-        let mouse = {
-            x: null,
-            y: null,
-            radius: 100
-        };
-
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = event.x;
-            mouse.y = event.y;
-        });
+        const numberOfParticles = 200; // Увеличим количество частиц
 
         class Particle {
             constructor(x, y, directionX, directionY, size, color) {
@@ -165,15 +215,12 @@
                 ctx.fill();
             }
             update() {
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < mouse.radius) {
+                if (this.x + this.size > canvas.width || this.x - this.size < 0) {
                     this.directionX = -this.directionX;
+                }
+                if (this.y + this.size > canvas.height || this.y - this.size < 0) {
                     this.directionY = -this.directionY;
                 }
-
                 this.x += this.directionX;
                 this.y += this.directionY;
                 this.draw();
@@ -182,7 +229,7 @@
 
         function init() {
             for (let i = 0; i < numberOfParticles; i++) {
-                const size = Math.random() * 5 + 1;
+                const size = Math.random() * 3 + 1; // Уменьшим размер частиц
                 const x = Math.random() * (canvas.width - size * 2) + size;
                 const y = Math.random() * (canvas.height - size * 2) + size;
                 const directionX = (Math.random() * 0.4) - 0.2;
